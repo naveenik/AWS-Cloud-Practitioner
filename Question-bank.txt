@@ -1,0 +1,78 @@
+
+Modules - Notebook 1
+1. Types of Cloud Computing
+2. IAM
+3. Elastic Compute Cloud(EC2)
+4. EC2 Instance Storage
+5. ELB and ASG
+
+Modules - Notebook 2
+1. S3
+2. Databases and Analytics
+3. ECS, Lambda, Batch
+4. Deployment and Managing Infrastructure
+
+Modules - Notebook 3
+1. Global Infrastructure
+2. Cloud Integrations
+3. Cloud Monitoring
+4. VPC and Networking
+
+Modules - Notebook 4
+1. Security and Compilance
+2. Account Managment, Billing and Support
+3. Advanced Identity
+4. Other Services
+
+Using a AWS over on-premises: lower upfront costs and lower variable costs
+Amazon Comprehend is a NLP processing serviece, it derives meaning from textual information
+Amzon Textract used to extract printed text, handwriting data from virtually any document.
+Amazon Monitron It used to detect abnormal machine behaviour and enables you to implement predictive maintenance
+Amazon workDocs It used for document collaboration, much like Google Docs and office 365 Word.
+Amazon Pinpoint : AWS Digital User Engagement srevice that enables customers communicate with end users(sms, email and push 
+notifications)
+
+AWS Step functions: To co-ordinate multiple AWS services into serverless workflows.
+AWS lambda: To coordinate single aws services into serverless workflows
+
+Bastion Host It used to provide access to a private network from an external network using internet
+but you cannot manage AWS services using a Bastion Host.
+
+AWS Partners Network(APN) comes with APN Consuting partners and APN Technology partners
+Consulting Partners: Professional services firms that helps customers of all size design, arcitect, migrate and build aplications on AWS
+Technology Partners: Software solutions that are either hosted on or Integrated with AWS platform.
+
+AWS Professional Services: It shares a collection of offerings to help you achieve specific outcomes related to enterprose cloud adoption.
+AWS Concierge: team composed of AWS billing and account experts that specialize in working with enterprise accounts.
+
+Customer Responsibility : Customer data, platform, applications, Identity and Access Management
+Operating systems, Network and Firewall configuration.
+Client side Data Encryption and Data Integrity, Server side Encryption, Network traffic protection
+
+
+AWS Responsibility: Compute, Storage, Database and Networking
+AWS Global Infrastructure(Availability Zones, Regios, Edge locations) 
+
+Global service - IAM, Route53, CloudFront and WAF
+Regions service - EBS, AWS Batch, RDS, Dynamo DB, EFS (means Multi az)
+Zonal service - EC2, and EBS Volumes
+
+
+Amazon Rekognition: It enables you to search, verify and organize million of images 
+http://169.254.169.254/latest/meta-data
+
+
+Permitted services --- Peneteration testing
+EC2 Instances, NAT Gateways, and ELB
+RDS, CloudFront, Aurora, API Gateways, Lambda and Lambda Edge locations
+Lightsail Enviornments and Elastic Beanstalk Enviornment
+Prohibited --- peneteration testing
+DNS Zone via Route53
+DDos, port flooding, protocal flooding, and request flooding
+
+--- Moving servers from On-premises to Cloud -----
+Capital expense is traded for variable expense
+Benefit from massive economies of scale
+Stop guessing capacity
+Increasing speed and agility
+Go global in minutes

@@ -1,0 +1,394 @@
+Modules:	
+1. Global Infrastructure
+2. Cloud Integrations
+3. Cloud Monitoring
+4. VPC and Networking
+
+1.  --------  Global Infrastrucutre -------- 
+
+Deploying an application across multiple Regions or Edge locations
+Decreased latency
+Disaster Recovery
+Attack protection
+
+------- Route 53 ----------
+
+Route 53 is a Managed DNS(Domain Name system)
+DNS is a collection of rules and records with helps clients understand how to reach server through URLs
+
+*No Health Checks DNS type
+Simple Rouing Policy
+
+*Health Check DNS type
+Wieighted Routing Policy
+Latency Routing Policy
+Failover Routing Policy
+
+Steps to Route the IP address to domain name
+1. Buy the domain name in Route 53 with cost 12 per year
+2. Create a records in that domain by adding IP address, which will route automatically to doamin purchased
+
+-------- AWS CloudFront --------
+
+* Content Delivery Network
+* Improves Read Performance, content is cached at the Edge
+* Improves user Experience
+
+CloudFront - Origins
+S3 Bucket
+Custom Origin 
+
+CloudFront v|s S3 Cross Region Replication 
+
+CloudFront:
+Global Edge Network
+Files are cached for a TTL
+Great for static content that must avaialble everywhere
+
+S3 Cross Region Replication:
+Must be setup each region you want to replication to happen
+Files are updated in near real-time
+Great for Dynamic content that needs to be avaialble at low-latency in few regions
+
+--------- S3 Transfer Accerlation -----------
+
+Accelerate global Uploads and downloads into Amazon S3
+Increase Transfer speed by transfering file to an AWS edge location which will forward
+the data to S3 bucket in the target region
+
+-------- AWS Global Accelerator -------
+
+Improve global application availability and performance using the AWS global network
+It will connect the Edge location, request from region, then it connect the Aplication region
+with minimal latency response
+
+AWS Global Accelerator v|s CloudFront
+
+They both use the AWS global network and its edge locations around the world
+Both services integrate with AWS Shield for Ddos Protection
+
+* CloudFront - Content Delivery Network
+Improves the performance for your cacheable contect(images and videos)
+content is served at edge
+
+* Gloabl Accelerator
+No caching, proxing packets at the edge of the applications running in one or more AWS regions
+Improves a performance for wide range of applications over TCP or UDP
+
+--------- AWS Outposts ---------
+
+They are the server racks that offers the same AWS Infrastructure, services, API and tools to build 
+your own applicaitons on-premises just as in the cloud.
+***
+we are responsible for Physical security
+Benefits:
+Low latency access to on-premises systems
+local data processing
+Data residency, Easier migration of data from on-premises to cloud
+Fully managed service
+* Some service that works on Outposts
+EC2, EBS, S3, EKS, ECS, RDS, EMR etc
+
+------- AWS Wavelength --------
+
+Wavelength Zones are infrastructure deployments embedded within the telecommunications providers, datacentres at the edge of the 5G networks
+***
+Ultra low-latecny applications through 5G networks
+
+--------- Summary ---------
+
+1. Global DNS: Route 53
+Great to route users to the closest deployment wiht least latency
+Great for disaster recovery strategies
+
+2. Global Content Delivery Network(CDN): CloudFront
+Replicate part of your application to AWS Edge locations - decrease latency
+cache common requests - Improved user experience decreased latency
+
+3. S3 Transfer Acceleration
+Accelerate global Uploads and downloads into Amazon S3
+
+4. AWS Global Accerlator
+Improves global application availability and performance using the AWS Global network
+
+5. AWS Outposts
+Deploy Outposts Racks in your own Data centres to extend AWS services
+
+6. AWS Wavelength
+Bring AWS services to the edge of the 5G networks
+Ultra-low latency applications 
+
+2. -------- Cloud Integrations -----------
+
+When we start deploying multiple applications, they will inevitably need to communicate with one another
+
+a. Synchronous comminication                b. Asynchronous communication
+Buying service ------> Shipping service       Buying service ---> Queue ---> Shipping service
+
+Synchronous between applications can be problematic if there is a sudden spike
+In this case its better to decouple the applications
+* using SQS: Queue Model
+* using SNS: pub/sub Model
+* using Kinesis: real-time data streaming model
+These services scale independently from our applications
+
+-------- SQS Service ---------
+
+Fully managed service(~Serverless), use to decouple applications
+Scale from 1 message per secount to 10000s per secound
+Default retentition of messges: 4 days, maximum 14 days
+Messages are deleted after they are read by consumers
+Consumers share the work to read messages and scale Horizontally
+  
+                     WEB Servers                           VIDEO Processing
+                        
+(users)request --> EC2 Instance(ASG)  ---> SQS Queue  ---> EC2 Instance(ASG)
+
+-------- SNS Service ----------
+
+when we want to send one message to many recievers, we use SNS service.
+
+The event publishers only sends messages to one SNS topic
+As many event subscribers as we went to listen to the SNS topic notofications
+
+SNS subscriptions can be:
+HTTP/HTTPS
+Emails, SMS messages, Mobile notifications
+SQS Queue, Lambda functions
+
+-------- Amazon Kinesis ---------
+Kinesis - Real-time Big data streaming
+Managed service to collect, process, and anlayze real-time streaming data at any scale
+
+Kinesis Data streams: Low latency streaming to ingest data at scale from hundreds of thousands of sources
+Kineses Data Firehouse: Load streams into S3, Redshift, Elastic-search etc
+Kinesis Data Analystics: perform real-time analytics on streams using SQL
+Kinesis Video Streams: Monitor real-time video streams for analytics or ML
+
+-------- Amazon MQ ----------
+
+Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ.
+SQS, SNS are cloud native services and they are using proprietary protocols from AWS.
+Traditional applications running from on-premises may use open protocols such as
+MQTT, AMQP, STOMP, Openwire, WSS
+
+When migrating to the cloud, instead of re-enginnering the application to use SQS and SNS, we use Amazon MQ
+Amazon MQ = Managed Apache ActiveMQ
+Amazon MQ doesn't scale as much as SQS/SNS
+Amazon MQ runs on dedicated machine(not serverless)
+Amazon MQ has both queue feature SQS and topic feature SNS 
+
+-------- Summary ---------
+
+SQS:
+Queue service in AWS
+Mutiple producers, messges are kept upto 14 days
+Mutiple Consumers share the read and delete messages when done
+Used to Decouple applications in AWS
+
+SNS:
+Notification service in AWS
+Subscribers Email, Lambda, SQS, HTTP, Mobile
+Multiple subscribers, sends all message to them all
+No message retention
+
+Kinesis: Real-time data streaming , persistance and analytics
+
+Amazon MQ: Managed Apache MQ in the cloud(MQTT, AMQP protocols)
+(for both ActiveMQ and RabbitMQ)
+
+3. -------- Cloud Monitoring -----------
+
+CloudWatch Provides metrics for every services in AWS
+Important Metric:
+EC2 Instance: CPU Utilization, status check, Network
+EBS Volumes: Disk Read/Writes
+S3 Buckets: BucketSizeBytes, NumberofObjects, AllRequests
+Billing: Total Estiamted Charge
+Service Limits: How much you have been using a service API
+Custom Metrics: Push your own metrcs
+
+CloudWatch Alarms
+Alarms are used to trigger notifications for any metric
+Alarm actions:
+* Auto scaling: Increase or decrease EC2 Instance desired count
+* EC2 Actions: Stop or Terminate, reboot, an EC2 Instance
+* SNS notifications: send a notification into an SNS topic
+various Options (sampling, %, Min, Max)
+
+Example: create a billing Alarm on the CloudWatch Billing Metric
+Alarm States: OK, INSUFFICIENT_DATA, Alarm
+
+------ CloudWatch Logs --------------
+It can collect logs from:
+Elastic Beanstalk: collection of logs from application
+ECS: collection from containers
+AWS Lambda: collction from function logs
+CloudTrail based on filter
+CloudWatch log agents: on EC2 machines or on-premises servers
+Route 53: Log DNS Queries
+
+Enable real-time monitoring of logs
+Adjustable Cloudwatch Logs Retention
+
+-------- Amazon CloudWatch Events(Event Bridge) --------
+Delivers a near real-time stream of system events that describes changes in AWS resources
+
+It used to Schedule: Cron Jobs
+Event Pattern
+Trigger lambda Function, Send SQS/SNS messages
+
+Event Bridge is the next Evolution of CLoudWatch Events
+Default Event Bus, Partner event bus, custom Event buses and Schema Registry
+
+-------- AWS CloudTrail --------
+Provides governance, compliance and audit for your aws account
+It get an History of Events/API calls made within your AWS account by,
+Console, SDK, CLI, AWS services
+***
+If a resource is deleted in AWS, investigate CloudTrail first.
+
+CloudTrial Events Types:
+* Management Events
+  Operations that are performed on resources in AWS account
+  Ex- Configuring Security, configuring rules for routing data
+  
+* Data Events
+  By default, data events are not logged
+  S3  Object-level activity(GetObject, DeleteOject, PutObject)
+  
+* CloudTrial Insights Events
+  Enable CloudTrail Insights to detect unusual activity in your account
+  CloudTrail Insights analyzes normal management events to create a baseline
+  
+------ AWS X-Ray ------
+Visual analysis of our Applications
+
+Advatages:
+Troubleshooting performance
+Understand dependencies in a micrsoservice architecture
+Pipoint service issues
+Find errors and exceptions
+Identify users that are throttled
+
+------ Amazon CodeGuru -------
+An ML powered service for automated code reviews and application performance recommendations
+Reviewer: Automated code reviews for static  code analysis, Profiler: recommendations about application performance during runtime
+
+
+Service Health Dashboard - AWS service status for each regions
+Personal Health Dashboard - Personlized view performance and availability of the AWS services underlying your Infrastrucutre
+Shows AWS outages impact directly you and your resources
+
+-------- Summary ---------
+
+CloudWatch: 
+   Metrics: monitor the performance of AWS services and billing metrics
+   Alarms: Automate notification, perform EC2 action, notify to SNS based on metric
+   Logs: collect log files from EC2 instances, servers, Lambda functions...
+   Events(EventBridge): React to events in AWS, or trigger a rule on a schedule
+CloudTrail: Audit API calls made with your AWS account
+CloudTrail Insights: Automated anlaysis of your CLoudTrailEvents
+X-Ray: Trace Requests made through your distributed systems for Troubleshooting and debugging logs
+Service Health Dashboard: Status of all AWS services across all regions
+Personal Health Dashboard: AWS events that impact your infrastructure
+Amazon CodeGuru: Automated code reviews and application performance recommedations
+
+4. -------- VPC and Networking ----------
+
+VPC(Regional resource):               Private Network to deploy your resources
+Subnets(Availability Azone resource): Allow you to partition your network inside your VPC.
+Public Subnet: 						  Subnet that is accessible from the Internet
+Private Subnet:                       Subnet that is not accessible from the Internet
+Route Tables:                         To Define access to Internet and between subnets
+
+Internet Gateway and NAT Gateways:
+Internet Gateways: It helps your VPC instances connect with the Internet
+Public Subnets have a route to the InternetGateway
+                              
+Public Subnet  === EC2 instance ----> IGW(Routing to IGW using Route Tables)  ---> Exposed to Internet
+Private Subnet === Database ----> NAT(Here DB is routed to NAT from there routed to IGW)  ---> Exposed to Internet
+
+NAT Gateways(AWS-managed) and NAT Instances(self-managed) allow your instances in your Private subnets
+to access the internet while remaining in Private.
+
+NACL(Network Acess Control List):
+* A firewall which controls traffic from and to subnet
+* Can Have Allow and Deny Rules
+* Are Attached at the subnet level
+* Rules only Include IP address
+
+Security Groups:
+* A firewall that controls traffic to and from an EC2 Instance
+* Can have only Allow rules
+* Rules includes IP address and other security Groups
+
+EC2 Instance(Security Group)  ---> NACL ---> Public Subnet
+
+Security Group                                 Netwrok ACL
+* Operates at Instance Level                  Operates at Subnet level
+* Support Allow Rules only                    Support Allow rules and Deny rules
+* Is Stateful: Return traffic is              Is Stateless: Return Traffic must be Explicitly
+automatic allowed, regardless of any rules    allowed by rules
+
+VPC Flow logs:
+Capture Information about IP traffic going into your interfaces
+VPC flow logs, Subnet Flow logs, Elastic Netwrok Interface flow logs 
+Helps us to monitor and troubleshoot connectivity issues,
+VPC Flow logs data can go to S3/CloudWatch Logs
+
+VPC Peering:
+* Connect two VPC, privately using AWS's Network
+* Make them behave as if they were in the same network
+* Must not have Overlapping CIDR(IP address range)
+VPC Peering connection is not transitive(must be established for each VPC that need to communicate with one Another)
+
+VPC Endpoints:
+It allows you to connect securely to your VPC to another service
+This gives you Enhanced security and lower latency to access AWS services
+VPC Endpoint Gateway: for S3 and DynamoDB
+VPC Endpoint Interface: The rest AWS services
+
+Site to Site VPN:
+* Connect an On-premises VPN to AWS
+* Goes Over the Public netwrok and little slow
+
+Direct Connect(DX):
+* Establish a Physical connection between on-premises and AWS
+* The connection is private network, secure and fast
+***
+How to make connection
+On-premises: must use a Customer Gateway:(CGW)
+AWS: must use a Virtual Private Gateway:(VGW)
+Once this Gateways are established are connected through Site-to-Site Connection
+
+Transit Gateway:
+For having transitive peering between thousands of VPC and On-premises, hub-and-spoke connection
+One signle Gateway to provide this functionality.
+
+--------- Summary ------------
+VPC: Virtual Private Cloud
+Subnets: Tied to an AZ, network partition of the VPC
+Internet Gateway: at the VPC level for public subnets, provide internet access
+NAT Gateway/Instances: Give Internet access to Priavte Subnets
+NACL: stateless, subnet rules for inbound and outbound
+Security Groups: Stateful, Operate at the EC2 Instance level
+VPC peering: Connect two VPC with non overlapping IP ranges, nontransitive
+VPC Endpoints: Provide Private access to AWS service within VPC
+VPC Flow logs: network traffic logs
+Site-to-site VPN: VPN over public internet between on-premises and AWS-managed
+Direct connect: Direct Private connection to AWS
+Transit Gateway: Connect thousands of VPC and on-premises networks together
+
+
+
+
+
+
+
+
+
+
+
+
+

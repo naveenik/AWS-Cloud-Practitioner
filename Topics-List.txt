@@ -1,0 +1,24 @@
+Modules - Notebook 1
+1. Types of Cloud Computing
+2. IAM
+3. Elastic Compute Cloud(EC2)
+4. EC2 Instance Storage
+5. ELB and ASG
+
+Modules - Notebook 2
+1. S3
+2. Databases and Analytics
+3. ECS, Lambda, Batch
+4. Deployment and Managing Infrastructure
+
+Modules - Notebook 3
+1. Global Infrastructure
+2. Cloud Integrations
+3. Cloud Monitoring
+4. VPC and Networking
+
+Modules - Notebook 4
+1. Security and Compilance
+2. Account Managment, Billing and Support
+3. Advanced Identity
+4. Other Services

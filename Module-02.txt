@@ -1,0 +1,448 @@
+Modules:
+1. S3
+2. Databases and Analytics
+3. ECS, Lambda, Batch
+4. Deployment and Managing Infrastructure
+
+--------  S3 -------- 
+Simple Storage Service is storage for Internet.
+
+It has a simple web services interface that you can use to store
+and retrieve any amount of data, at any time, from any where on the web.
+
+S3 Security:
+* User Based
+  IAM policies - which API calls should be allowed for specific user from IAM console
+* Resource Based
+  Bucket Policies - Bucket wide rules from the S3 console - allows cross account
+  Object Access control
+  Bucket policy and user policy are the two of the access policy options avaialablefor your to grant permission to S3 resources.
+***
+Public Access  - Use Bucket policy
+User Access to S3 - IAM permissions
+A storage service with virtually unlimited space
+a highly durable object storage infrastructure
+with 99.999999999 performance
+EC2 instance access - Use IAM Roles (best ec2 attache ec2 roles to access)
+
+S3 Websites:
+S3 can host static websites and have them accessible on the www
+<bucket-name>.s3-website-<AWS-region>.amazonaws.com
+If we recieve 403 error, mkae sure the bucket policy allows public reads
+
+Versioning the s3, It enabled at the Bucket level
+Its best practises to version your buckets
+* Protect against un-intended deletes
+* Easy roll back to previous version
+Note:
+Any file is not versioned proir to enabling versioning will have version "null"
+
+***
+S3 Storage Classes
+* Amazon S3 Standard - General Purpose - Used for Frequently accessing
+* Amazon S3 Standard-Infrequent Access - Used for Less frequence access
+* Amazon S3 One Zone-Infrequent Access - same as above but in single AZ rather than Mutli AZ
+* Amazon S3 Intelligent Tiering
+Backup storage and retrieval
+* Amazon Glacier : with low cost, retrieval from few minutes to several hours
+* Amazon Glacier Deep Archieve : with much low cost, retrieval from 12 to 18 hours
+
+For Infrequently accessing move to STANDARD_IA
+For archieve onjects you don't need in real-time, GLACIER or DEEP_ARCHIEVE
+
+Edge Computing
+Process data while its being created on an edge location
+Thes locations may have limited/no internet access
+we setup a snowball/Edge snowcome device to do edge computing
+
+AWS Storage Gateway
+Bridge between on-premise data and cloud data in S3
+Uses cases: Disaster rcovery, Backup and restore, tiered storage
+
+------------ Summary ------------
+
+Buckets v/s Objects: Global unique name, tied to a region
+S3 secuirty: IAM policy, S3 Bucket policy, S3 Encryption
+S3 Websites: Host a static website on Amazon S3
+S3 versioning: Multiple version for files, prevent accident deletes
+S3 Access Logs: Log request made within your S3 bucket
+S3 Replicatin: same-region or cross-region must enable versioning
+S3 Storage Classes: Standard, A1, IX-IA, Intelligent, Glacier, Glavier Deep ArchieveS3 Lifecycle Rules: Transistion objects between classes
+S3 Glacier vault lock/ s3 oBJECT kOCK: WORM(Write Once Read Many)
+Snow Family: Import data onto S3 thorugh a physical devicem edge computing
+Ops hub: Desktop application to manage snow family devices
+Storage Gateway: Hybrid solution to extend on-premises storage to S3
+
+---------- Databases and Analytics ---------------
+
+1. Databases
+
+Storing data on Disks(EFS, EBS, EC2 Instance store, S3) can have there limits
+Database comes into Picture when we want to store data in structure and build the indexes efficiently to query through the data
+Database are Optimized for a purpose and come with different features, shapes and constraints
+
+Relation database: Collection of data items with pre-defined relationships between them.
+These items are organized as a set of tables with row and columns
+It uses SQL as a Query language
+
+Non Relation Database: Data are stored in non-tabular form (JSON),
+they are used when large quantities of complex and diverse data need to be organized.
+
+------- AWS RDS Overview  -----------
+It allows to create database in the cloud that are managed by AWS
+Ex : Postgres, MySql, MariaDB, Oracle, Microsoft SQL server and  
+Auora(developed by aws, not open sourced, it supports both mysql and postgres sql more faster 5 percent and cost also 20 percent, Its not a free tier)
+Aurora has self healing property
+Advantage over using RDS versus deploying DB on EC2
+* Automated provsioning, OS patching
+* Continous Backup and restore to specific timestamp
+* Monitoring Dashboards
+* Multi AZ setup for DR
+* Maintenance window for upgrades
+* Scaling capability (vertical and horizontal)
+***
+But you can't SSH into your instances
+
+-------   DB - Read Replicas, Multi AZ   ---------
+
+Read Replicas:
+Scale the workload to your DB
+can create upto 5 Read replicas
+Data is only written to the main DB
+
+Multi AZ:
+Failover in case of AZ outage(high avaialability)
+Data is only read/written main database
+Can only have 1 other AZ is failover
+
+Multi Regions:
+Deploying Multi Region for Read Replicas
+Disaster recovery in case of region issue
+Local performance for global users
+Replication cost
+
+Amazon Elastic Cache Overview:
+Elastic cache - Is to get managed Redis or Memcached
+They are In-memory databases with high performance, low latency
+Helps reduces load off databases for read instensive workloads
+
+Here AWS takes care off OS maintenance/Patching, organisations, Setup configuraions, monitoring, failure recovery and backups
+
+---------- Dynamo DB --------------
+
+No SQL Databse
+Fully managed Highly available with replication across 3AZ
+Its distributed "serverless" database
+Millions of request per secound, trillions of row, 100s of TB storage
+Single-digit millisecound latency - low latency retrieval
+Fast and convinent in performace
+
+
+Dynamo DB is key/value Databse, Documentation Database, wide-column Database, Graph Databses etc.
+Dynamo DB Accelator - Called as DAX (Fully managed in-memory cache for Dynamo DB)
+DAX is only used for and is integrated with Dynamo DB, While Elastic cache can be used for other Databses
+
+------ Redshift Overview ---------
+
+Redshift is based on PostgresSQL, but its not used for OLTP(Online Transaction Processing)
+Its OLAP - Online analytical processing(analystics and data warehousing)
+OLTP - It stores and process data from transactions in real time
+OLAP - It uses Complex queries to analyse the aggregated historical data.
+
+Load data once every hour, not every secound
+Column storage of data
+Has a SQL Interface for performing the queries
+
+2. Analytics
+
+------ Amazon EMR (Elastic Map Reduce) ---------
+EMR helps in creating Hadoop clusters(Big data) to analyze and process vast amount of data
+The clusters can be made of hundreds of EC2 instance , its suport Apache spark, HBase and Presto etc
+EMR takes care of all the provsioning and configuration
+***
+Use cases: Data processing, machine learning, web indexing and Big data etc
+
+--------- Athena Overview -----------
+Fully serverless database with SQL capabilities
+Its used to query data in S3
+Output results back to S3
+***
+Use case: One-time SQL queries, serverless queries on S3, log analytics.
+
+------ Amazon QuickSight  ---------
+Serverless machine learning-powered business intelligence service to create Dashboards
+Use cases: Building visualizations, Business analytics etc
+Integrated with RDS, Aurora, Athens, Redsihft, S3
+
+----- Document DB --------
+Aurora is an "AWS-implementation" of PostgresSQL/MySql
+Document DB  is the same for MangoDB(which is a NoSql Database)
+MangoDB is used to store, query and index JSON data
+similar concepts as like Aurora
+
+------ Amazon Neptune -------
+Its Fully Managed Graph Database
+A popular graph dataset would be social netwrok
+Highly avaialble across 3AZ with upto 15 replicas
+Can store upto billions of relations and query the graph with sinlge millisecounds latency
+Great for knowledge graphs(wikipedia), fraud detetection, recommedation engines, social networking
+
+------ Amazon QLDB --------
+QLDB stands for "Quantum Ledger Database"
+A ledger is a book for recording financial transactions
+Its Immutable system: no entry can be removed or modified, cryptographically verifiable.
+Differenc with Amazon Managed Blockchain "No Decentralization component" in accordance with financial regualtion rules.
+
+---- Amazon Managed BloackChain -----
+Blockchain makes it possible to build applications where multiple parties
+can execute transactions without need for a trusted central authority
+***
+Its "Decenetralization Component"
+Compatible with the frameworks Hyperledger Fabric & ethereum
+
+------  DMS(Database Migration service) -------
+Quickly and securely migrate databases to AWS, resilent, self healing.
+The source database remains available during the migration
+
+Supports:
+Homogeneous migrations: Ex Oracle to Oracle
+Hetrogeneous migrations : Ex Microsoft SQL Server to Aurora
+
+------- AWS Glue ------
+* Managed extract, transform and load (ETL) service
+* Usefull to prepare and transform data for analytics
+* Fully serverless service
+
+This AWS Glue will extract data from S3 or Amazon RDS then load to Redshoft or similar etc
+Glue Data Catalog: catalog of datasets(can be used by Athena, Redshift, EMR etc)
+
+----- DB and Analytics Summary ------
+* Relation DB: OLTP, RDS and Aurora(SQL)
+* Difference betweemn Multi-AZ, Read Replicas, Multi Region
+* In-memory Database: ElasticCache
+* key/value Database: DynamoDB(serverless) and DAX(cache for DynamoDB)
+* Warehouse - OLAP: Redshift(SQL)
+* Hadoop Cluster - EMR
+* Athena: Query data on Amazon S3(serverles and SQL)
+* QuickSight: Dasboards on your data(serverless)
+* DocumentDB: Aurora for MangoDB (JSON - NO Sql database)
+* Amazon QLDB: Financial Transactions Ledger(Immutable Journal, cryptographically)
+* Amazon Managed Blockchain: Managed Hyperledger Fabric and Ethereum blockchains
+* Glue: Managed ETL(Extract Transform Load) and Data Catalog service
+* Database Migration: DMS
+* Neptune: Graph Database
+
+
+2. ------ ECS, Lambda, Batch, -----------
+
+ECS:
+Elastic Container Service is a fully managed container orchestration service that helps you easily deploy, manage and scale containerized applications.
+Docker containers are launched on AWS
+we must provsion and maintain the Infrastructure(EC2 instance as number of nodes)
+
+Fargate:
+Launch Docker containers on AWS
+we dont provision of the Infrastructure - Simpler
+serverless offering
+AWS just runs contaiers for your application based on CPU/RAM need
+
+ECR:
+Elastic container Registry - Private Docker registry on AWS
+This is where you store your Docker images so they can be run by ECS or Fargate
+
+---------- Severless ----------
+Serverless is a new paradigm in which developers don't have to manage servers anymore
+They just deploy code
+Intially serverless == Faas(Function as a service)
+Serverless was Pioneered by AWS Lambda but now also includes anything that managed: "databases, messaging, storage, etc"
+Serverless does not mean there are no servers - It means you just dont manage/ provision/ see them
+Ex: S3, DyanamoDB, Fargate, Lambda
+
+------ AWS Lambda -------
+
+EC2 Instance  details
+Virtual servers in the cloud
+Limited by RAM and CPU
+Continuosly running
+Scaling means Intervention to add/remove servers
+
+Lamda details
+Virtual Functions - No servers to manage
+Limited by one - Short Executions
+Run on demand
+Scaling is automated
+
+Benefits of AWS lambda:
+Easy Pricing
+Integrated with Whole AWS suite of services
+Event Drievn: Function get Invoked by AWS when needed
+Integrated with many Prorgamming language
+Easy Monitoring through CLoudWatch
+**
+Lamdba pricing is based on pay per calls and pay per duration
+It is usually very cheap to run AWS lambda os its very popular
+
+------- Amazon API Gateway ------------
+
+It builds a serverless API
+Fully managed service for developers to easily create, publish, maintain, monitor and secure API's
+Support RESTfull API ans websocket APIs
+
+------- AWS Batch ---------
+
+Fully managed Batch processing at any scale
+A Batch job is a job with a start and end (opposed to continous)
+Batch job Dynamically launch EC2 instance or spot instances
+AWS batch provides right amount of compute/memory
+You submit or schedule batch jobs and AWS Batch does rest
+
+------- Batch v/s Lambda -------
+
+Lambda:
+Time limit
+Limited resources
+Limited temporary disk space
+Serverless
+
+Batch:
+No Time limit
+Any runtime as long its packaged as Docker images
+Rely on EBS/Instance store for Disk space
+Relies on EC2 (can be managed by AWS)
+
+------ Lightsail Overview ----------
+
+Virtual servers, storage, databases and networking
+Simpler alternative to using EC2, RDS, ELB, EBS, Route 53
+***
+Great for People with Little Cloud Experience
+use cases:
+Simple web applications
+Websites
+Dev/Test Enviornment
+
+------- Compute, ECS, Batch and Lightsail Summary -------
+* Docker: Contaienr Technology to run applications
+* ECS: run Docker containers on EC2 instance
+* Fargate: Run Docker containers without provisioning the Infrastructure, serverless offereing(No EC2 instances)
+* ECR: Private Docker Images Repository
+* Batch: run Batch jobs on AWS across managed EC2 instance
+* Lightsail: predictable and low pricing for simple applications and DB stacks
+* Lambda is serverless, Function as a service, seamless scaling, reactive
+  Lambda billing:
+  By the time run and RAM provisioned
+  By the number of invocations
+  invocation time : Upto 15 minutes
+  use cases: Create Thumbnails for images uploaded to S3
+* API Gateway: Expose Lambda functions as HTTP API
+
+3. ------- Deployment and Managing Infrastructure --------
+
+-------- AWS ClouFormation ---------
+
+Is a service that helps you model and setup your AWS resources so that you can spend less time managing those resources 
+and more time focusing on your applications that run in AWS.
+They are Declarations of the AWS resources that make up a stack in JSON or YAML Files.
+
+Benefits of AWS Cloudformation:
+* Infrastructure as a code
+* Cost saving and estimation
+* Productivity
+* Leverage from the Document
+* Supports all AWS resources
+
+just-ec2-instance.yaml
+---
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+	Properties:
+	  AvailabilityZone: us-east-1a
+	  ImageId: ami-a4c7edb2
+	  InstanceType: t2.micro
+	  
+---------- Elastic BeanStalk ---------
+
+With EB you can quickly deploy and manage applications in the AWS Cloud,
+without worrying about the infrastructure that runs those applications
+
+* Instance and OS Configuration are done by EB
+
+Only Application code is responsibility of the Developer
+Three Architecture models:
+* Single Instance Deployment: Good for Dev
+* LB + ASG : Great for production or pre-prodcution for web applications
+* ASG only: great for non-web apps in Production
+
+Its support many platform and languages for application Deployment
+
+------- CodeDeploy Overview ------
+
+We want to deploy our appplication automatically(Vesion 1 to 1.1, 1.2, 1.3, 1.4 etc)
+Servers/Instance must be provided and configured ahead of time with the codeDeploy agent
+
+-------- AWS CodeCommit --------
+
+Code Repository Offered by AWS, as like github, bitbucket etc
+Fully managed, shared with team to collaborate, Private secured and integrated with single AWS account
+
+-------- AWS CodeBuild --------
+
+Its fully managed, serverless
+Compile source codes, run, tests, and produce packages that are ready to be deployed
+Its secure, pay-as-you-pricing  - Only pay for Build time
+
+-------- AWS CodePipeline --------
+
+Its Orchestration layer of CI-CD Process.
+Fuly managed and compataible with CodeCommit, CodeBuild, CodeDeploy, EB, CloudFormation.
+Fast delivery and rapid Updates.
+
+-------- Code Artifact --------
+
+CodeArtifact ia a secure, scalable and cost-effective artifact management for software development
+Developers and CodeBuild can then retrieve Dependiceies straight from CodeArtifact
+
+------- AWS CodeStar ---------
+Its used for setup your entire development and Continous Delivery toolchain for coding, Building, testingg and deploying your applicatio code.
+
+------- AWS Cloud9 -------
+
+AWS Cloud9 is a cloud IDE(Integrated Development Enviornment) for writing, running, and debugging a code
+***Cloud IDE can be used within a web browser meaning you can work, 
+   on your projects from office, home or anywhere with internet with no setup necessary
+
+------- AWS SSM (Systems Manager) --------
+Helps to manage your EC2 Instance and ON-premises systems at scale
+***
+Patching automation for enhanced compliance
+Run commands across an entire fleet of servers
+Store parameter configuration with SSM Parameter store
+
+Works for both Windows and Linux
+* We Install SSM Agent onto the systems we control
+* If an instance can't be controlled with SSM, its probably issue with SSM agent
+
+------- AWS OpsWorks --------
+Chef and puppet help you perform server configuration automatically or repitative actions
+They work geat with EC2 and On-Premises VM
+***
+Chef and Puppet needed ===> AWS OpsWorks
+
+------- Summary -------
+
+CloudFormation: IAC works with almost all AWS resources
+Beanstalk: Paltforma as a service
+CodeDeploy: Deploy and Upgrade any application onto servers
+Systems Manager: patch and configure and run commands at scale
+OpsWorks: Manage chef and puppet in AWS
+CodeCommit: Store code in private Git repository
+CodeBuild: Build and test code in AWS
+CodeDeploy: Deploy code onto EC2 and On-premises servers
+CodePipeline: Orchestration of Pipeline(from code to build to deploy)
+CodeArtifact: Store software packages/ dependecies on AWS
+CodeStar: Unified view for allowing developers to do CICD and code
+Cloud9: Cloud IDE( Integrated Developement Enviornment) with collab
+AWS CDK: Define your cloud Infrastructure using a programming language
+
+
